@@ -1,6 +1,7 @@
 using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.Interactions;
 
 public class Tests
@@ -55,14 +56,22 @@ public class Tests
 	[SetUp]
 	public void SetUp()
 	{
-		var options = new ChromeOptions();
+		var options = new FirefoxOptions();
+		options.AddArgument(@"user-data-dir=c:\Users\Evgen\AppData\Local\Mozilla\Firefox\Profiles\"); // Укажите путь к профилю Firefox
+
+		var geckoDriverPath = @"C:\Users\Evgen\Desktop\labs\c#\WebTest\WebTest\gecko";
+		driver = new OpenQA.Selenium.Firefox.FirefoxDriver(geckoDriverPath, options);
+
+		driver.Navigate().GoToUrl("https://accounts.google.com/InteractiveLogin");
+
+		/**var options = new ChromeOptions();
 		options.AddArguments(@"user-data-dir=c:\Users\Evgen\AppData\Local\Google\Chrome\User Data\");
 		
 
 		driver = new OpenQA.Selenium.Chrome.ChromeDriver();
 		driver = new ChromeDriver(Directory.GetCurrentDirectory(), options);
 		driver.Navigate().GoToUrl("https://accounts.google.com/InteractiveLogin");
-		//driver.Navigate().GoToUrl("https://contacts.google.com/?hl=ru"); 
+		//driver.Navigate().GoToUrl("https://contacts.google.com/?hl=ru"); */
 	}
 	[Test]
 	public void TestRegistrationPositive()
@@ -130,6 +139,230 @@ public class Tests
 		cont.Click();
 	}
 	[Test]
+	public void TestRegistrationWrongDate()
+	{
+		//переход к регистрации
+		var signIn = driver.FindElement(_signInButton);
+		signIn.Click();
+		signIn = driver.FindElement(_signInButton2);
+		signIn.Click();
+
+		//страница имени
+		var login = driver.FindElement(_nameInputButton);
+		login.SendKeys(name);
+		login = driver.FindElement(_surnameInputButton);
+		login.SendKeys(surname);
+		var cont = driver.FindElement(_continueNamesButton);
+		cont.Click();
+
+		Thread.Sleep(4000);
+
+		//страница даты и пола
+
+		var gender = driver.FindElement(_genderSelectButton);
+		gender.Click();
+		gender = driver.FindElement(_gender2SelectButton);
+		gender.Click();
+		Thread.Sleep(1000);
+
+		var date = driver.FindElement(_dayInputButton);
+		date.SendKeys("35");
+	}
+	[Test]
+	public void TestRegistrationWithoutSurname()
+	{
+		//переход к регистрации
+		var signIn = driver.FindElement(_signInButton);
+		signIn.Click();
+		signIn = driver.FindElement(_signInButton2);
+		signIn.Click();
+
+		//страница имени
+		var login = driver.FindElement(_nameInputButton);
+		login.SendKeys(name);
+		login = driver.FindElement(_surnameInputButton);
+		var cont = driver.FindElement(_continueNamesButton);
+		cont.Click();
+
+		Thread.Sleep(4000);
+
+		//страница даты и пола
+
+		var gender = driver.FindElement(_genderSelectButton);
+		gender.Click();
+		gender = driver.FindElement(_gender2SelectButton);
+		gender.Click();
+		Thread.Sleep(1000);
+
+		var date = driver.FindElement(_dayInputButton);
+		date.SendKeys("21");
+
+		date = driver.FindElement(_monthSelectButton);
+		date.Click();
+		date = driver.FindElement(_month2SelectButton);
+		date.Click();
+
+		date = driver.FindElement(_yearInputButton);
+		date.SendKeys("2003");
+
+		cont = driver.FindElement(_continue2Button);
+		cont.Click();
+
+		/*страница выбора создания почты
+
+		
+		var select = driver.FindElement(_selectionButton);
+		select.Click();
+		cont = driver.FindElement(_continueSelectionButton);
+		cont.Click();
+		*/
+		//страница названия почты
+		Thread.Sleep(2000);
+		var mailName = driver.FindElement(_mailNameInputButton);
+		mailName.SendKeys(email);
+		cont = driver.FindElement(_continueButton);
+		cont.Click();
+
+		//страница ввода паролей
+		Thread.Sleep(2000);
+		var pass1 = driver.FindElement(_passwordInputButton);
+		pass1.SendKeys(password);
+		var pass2 = driver.FindElement(_password2InputButton);
+		pass2.SendKeys(password);
+		cont = driver.FindElement(_continueButton);
+		cont.Click();
+	}
+	[Test]
+	public void TestRegistrationWrongMailName()
+	{
+		//переход к регистрации
+		var signIn = driver.FindElement(_signInButton);
+		signIn.Click();
+		signIn = driver.FindElement(_signInButton2);
+		signIn.Click();
+
+		//страница имени
+		var login = driver.FindElement(_nameInputButton);
+		login.SendKeys(name);
+		login = driver.FindElement(_surnameInputButton);
+		login.SendKeys(surname);
+		var cont = driver.FindElement(_continueNamesButton);
+		cont.Click();
+
+		Thread.Sleep(4000);
+
+		//страница даты и пола
+
+		var gender = driver.FindElement(_genderSelectButton);
+		gender.Click();
+		gender = driver.FindElement(_gender2SelectButton);
+		gender.Click();
+		Thread.Sleep(1000);
+
+		var date = driver.FindElement(_dayInputButton);
+		date.SendKeys("21");
+
+		date = driver.FindElement(_monthSelectButton);
+		date.Click();
+		date = driver.FindElement(_month2SelectButton);
+		date.Click();
+
+		date = driver.FindElement(_yearInputButton);
+		date.SendKeys("2003");
+
+		cont = driver.FindElement(_continue2Button);
+		cont.Click();
+
+		/*страница выбора создания почты
+
+		
+		var select = driver.FindElement(_selectionButton);
+		select.Click();
+		cont = driver.FindElement(_continueSelectionButton);
+		cont.Click();
+		*/
+		//страница названия почты
+		Thread.Sleep(2000);
+		var mailName = driver.FindElement(_mailNameInputButton);
+		mailName.SendKeys("sdfsdfsfsdf   Fdkfjejf 232432");
+		cont = driver.FindElement(_continueButton);
+		cont.Click();
+
+		//страница ввода паролей
+		Thread.Sleep(2000);
+		var pass1 = driver.FindElement(_passwordInputButton);
+		pass1.SendKeys(password);
+		var pass2 = driver.FindElement(_password2InputButton);
+		pass2.SendKeys(password);
+		cont = driver.FindElement(_continueButton);
+		cont.Click();
+	}
+	[Test]
+	public void TestRegistrationDifferentPasswords()
+	{
+		//переход к регистрации
+		var signIn = driver.FindElement(_signInButton);
+		signIn.Click();
+		signIn = driver.FindElement(_signInButton2);
+		signIn.Click();
+
+		//страница имени
+		var login = driver.FindElement(_nameInputButton);
+		login.SendKeys(name);
+		login = driver.FindElement(_surnameInputButton);
+		login.SendKeys(surname);
+		var cont = driver.FindElement(_continueNamesButton);
+		cont.Click();
+
+		Thread.Sleep(4000);
+
+		//страница даты и пола
+
+		var gender = driver.FindElement(_genderSelectButton);
+		gender.Click();
+		gender = driver.FindElement(_gender2SelectButton);
+		gender.Click();
+		Thread.Sleep(1000);
+
+		var date = driver.FindElement(_dayInputButton);
+		date.SendKeys("21");
+
+		date = driver.FindElement(_monthSelectButton);
+		date.Click();
+		date = driver.FindElement(_month2SelectButton);
+		date.Click();
+
+		date = driver.FindElement(_yearInputButton);
+		date.SendKeys("2003");
+
+		cont = driver.FindElement(_continue2Button);
+		cont.Click();
+
+		/*страница выбора создания почты
+
+		
+		var select = driver.FindElement(_selectionButton);
+		select.Click();
+		cont = driver.FindElement(_continueSelectionButton);
+		cont.Click();
+		*/
+		//страница названия почты
+		Thread.Sleep(2000);
+		var mailName = driver.FindElement(_mailNameInputButton);
+		mailName.SendKeys(email);
+		cont = driver.FindElement(_continueButton);
+		cont.Click();
+
+		//страница ввода паролей
+		Thread.Sleep(2000);
+		var pass1 = driver.FindElement(_passwordInputButton);
+		pass1.SendKeys(password);
+		var pass2 = driver.FindElement(_password2InputButton);
+		pass2.SendKeys("password");
+		cont = driver.FindElement(_continueButton);
+		cont.Click();
+	}
+	[Test]
 	public void TestAuthorisationPositive()
 	{
 		var mail = driver.FindElement(_authMailInputButton);
@@ -139,6 +372,50 @@ public class Tests
 		Thread.Sleep(4000);
 		var passwd = driver.FindElement(_authPasswInputButton);
 		passwd.SendKeys(password);
+		cont = driver.FindElement(_continueButton);
+		cont.Click();
+
+		Thread.Sleep(3000);
+		var apps = driver.FindElement(_settingsButton);
+		apps.SendKeys("Контакты");
+		
+		Thread.Sleep(3000);
+		apps = driver.FindElement(_personsButton);
+		apps.Click();
+
+	}
+	[Test]
+	public void TestAuthorisationWrongMail()
+	{
+		var mail = driver.FindElement(_authMailInputButton);
+		mail.SendKeys("blablabla2342342423342@gmail.com");
+		var cont = driver.FindElement(_continueButton);
+		cont.Click();
+		Thread.Sleep(4000);
+		var passwd = driver.FindElement(_authPasswInputButton);
+		passwd.SendKeys(password);
+		cont = driver.FindElement(_continueButton);
+		cont.Click();
+
+		Thread.Sleep(3000);
+		var apps = driver.FindElement(_settingsButton);
+		apps.SendKeys("Контакты");
+
+		Thread.Sleep(3000);
+		apps = driver.FindElement(_personsButton);
+		apps.Click();
+
+	}
+	[Test]
+	public void TestAuthorisationWrongPassword()
+	{
+		var mail = driver.FindElement(_authMailInputButton);
+		mail.SendKeys(realmail);
+		var cont = driver.FindElement(_continueButton);
+		cont.Click();
+		Thread.Sleep(4000);
+		var passwd = driver.FindElement(_authPasswInputButton);
+		passwd.SendKeys("simplepasswd");
 		cont = driver.FindElement(_continueButton);
 		cont.Click();
 
